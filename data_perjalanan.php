@@ -62,8 +62,6 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark">
         <a class="navbar-brand" href="dashboard.php">
-            <img src="assets/pgn.png" width="130" height="30" class="mr-2">
-            <span class="separator"></span>
             SAFETY DRIVE
         </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
@@ -144,7 +142,7 @@
         echo "</div>";
         echo "<button class='btn btn-primary' type='submit'><i class='fas fa-search'></i></button>";
         echo "<button class='btn btn-danger ml-1' type='reset' onclick='window.location.href=\"data_perjalanan.php\"'><i class='fas fa-sync'></i></button>";
-        echo "<a href='download.php' class='btn btn-success ml-1'><i class='fas fa-file-pdf'></i></a>";
+        echo "<a href='download_php2.php' class='btn btn-success ml-1'><i class='fas fa-file-pdf'></i></a>";
         echo "<a href='download_excel2.php' class='btn btn-success ml-1'><i class='fas fa-file-excel'></i></a>";
         echo "</form>";
         echo "</div>";
