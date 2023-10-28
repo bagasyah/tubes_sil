@@ -153,7 +153,7 @@
         echo "</div>";
         echo "<button class='btn btn-primary' type='submit'><i class='fas fa-search'></i></button>";
         echo "<button class='btn btn-danger ml-1' type='reset' onclick='window.location.href=\"data_perjalanan.php\"'><i class='fas fa-sync'></i></button>";
-        echo "<a href='download_php2.php' class='btn btn-success ml-1'><i class='fas fa-file-pdf'></i></a>";
+        echo "<a href='download_pdf2.php' class='btn btn-success ml-1'><i class='fas fa-file-pdf'></i></a>";
         echo "<a href='download_excel2.php' class='btn btn-success ml-1'><i class='fas fa-file-excel'></i></a>";
         echo "</form>";
         echo "</div>";
