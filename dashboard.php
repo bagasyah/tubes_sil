@@ -162,7 +162,18 @@
             if ($user_result->num_rows > 0) {
                 $user_row = $user_result->fetch_assoc();
                 $username = $user_row['username'];
-
+                function calculateBBM($jenis_perjalanan, $total_km)
+                {
+                    $bbm_per_km = 1 / 10;
+                    $perkiraan_bbm = round($total_km * $bbm_per_km); // Bulatkan hasil jika koma
+                    return $perkiraan_bbm;
+                }
+                function calculatebiaya($perkiraan_bbm)
+                {
+                    $harga = 14000;
+                    $biaya = $perkiraan_bbm * $harga;
+                    return $biaya;
+                }
                 echo "<h2>Profil User</h2>";
                 echo "<p>Nama: $username</p>";
 
@@ -268,7 +279,8 @@
                 echo "<th>KM Akhir</th>";
                 echo "<th>Total KM</th>";
                 echo "<th>Jenis Perjalanan</th>";
-                //echo "<th>Status</th>";
+                echo "<th>Perkiraan BBM</th>";
+                echo "<th>Biaya</th>";
                 echo "<th>Actions</th>";
                 echo "</tr>";
                 echo "</thead>";
@@ -283,8 +295,12 @@
                     $total_km = $row['km_akhir'] - $row['km_awal'];
                     echo "<td>" . $total_km . "</td>";
                     echo "<td>" . $row['jenis_perjalanan'] . "</td>";
-                    // Perhitungan perkiraan BBM berdasarkan jenis perjalanan dan tipe mobil
                     $jenis_perjalanan = $row['jenis_perjalanan'];
+                    $perkiraan_bbm = calculateBBM($jenis_perjalanan, $total_km);
+                    $biaya = calculatebiaya($perkiraan_bbm);
+                    // Perhitungan perkiraan BBM berdasarkan jenis perjalanan dan tipe mobil
+                    echo "<td>" . $perkiraan_bbm . " Liter</td>";
+                    echo "<td>RP." . $biaya . "</td>";
                     echo "<td>";
                     echo "<a href='edit.php?id=" . $row['id'] . "' class='btn btn-primary'><i class='fas fa-pencil-alt'></i></span></a> ";
                     echo "<a href='delete.php?id=" . $row['id'] . "' class='btn btn-danger'><i class='fas fa-trash-alt'></i></span></a> ";

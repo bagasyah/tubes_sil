@@ -118,7 +118,18 @@
         $query .= " ORDER BY laporan.id DESC";
         $totalRowsResult = $conn->query($query);
         $totalRows = $totalRowsResult->num_rows;
-
+        function calculateBBM($jenis_perjalanan, $total_km)
+        {
+            $bbm_per_km = 1 / 10;
+            $perkiraan_bbm = round($total_km * $bbm_per_km); // Bulatkan hasil jika koma
+            return $perkiraan_bbm;
+        }
+        function calculatebiaya($perkiraan_bbm)
+        {
+            $harga = 14000;
+            $biaya = $perkiraan_bbm * $harga;
+            return $biaya;
+        }
         // Eksekusi query ke database
         $result = $conn->query($query);
 
@@ -171,6 +182,8 @@
         echo "<th>KM Akhir</th>";
         echo "<th>Total KM</th>";
         echo "<th>Jenis Perjalanan</th>";
+        echo "<th>Perkiraan BBM</th>";
+        echo "<th>Biaya</th>";
         echo "</tr>";
         echo "</thead>";
         echo "<tbody>";
@@ -188,9 +201,12 @@
             $total_km = $row['km_akhir'] - $row['km_awal']; // Menghitung total km
         
             $jenis_perjalanan = $row['jenis_perjalanan'];
-
+            $perkiraan_bbm = calculateBBM($jenis_perjalanan, $total_km);
+            $biaya = calculatebiaya($perkiraan_bbm);
             echo "<td>" . $total_km . "</td>";
             echo "<td>" . $jenis_perjalanan . "</td>";
+            echo "<td>" . $perkiraan_bbm . " Liter</td>";
+            echo "<td>RP." . $biaya . "</td>";
             echo "</tr>";
 
             $laporan_id = $row['id'];
