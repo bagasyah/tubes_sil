@@ -319,6 +319,123 @@
             } else {
                 echo "Belum ada laporan perjalanan.";
             }
+        } elseif ($role == 'admin') {
+            $search_query = "";
+            if (isset($_GET['search'])) {
+                $search_query = $_GET['search'];
+            }
+
+            $query = "SELECT * FROM laporan INNER JOIN users ON laporan.user_id = users.id";
+
+            // Tambahkan kondisi pencarian berdasarkan tanggal
+            $tanggal_awal = $_GET['tanggal_awal'] ?? '';
+            $tanggal_akhir = $_GET['tanggal_akhir'] ?? '';
+
+            if (!empty($tanggal_awal) && !empty($tanggal_akhir)) {
+                $query .= " WHERE tanggal BETWEEN '$tanggal_awal' AND '$tanggal_akhir'";
+            }
+
+            if (!empty($search_query)) {
+                if (!empty($tanggal_awal) && !empty($tanggal_akhir)) {
+                    $query .= " AND (tanggal LIKE '%$search_query%' OR alamat_awal LIKE '%$search_query%' OR alamat_tujuan LIKE '%$search_query%' OR username LIKE '%$search_query%')";
+                } else {
+                    $query .= " WHERE tanggal LIKE '%$search_query%' OR alamat_awal LIKE '%$search_query%' OR alamat_tujuan LIKE '%$search_query%' OR username LIKE '%$search_query%'";
+                }
+            }
+
+            function calculateBBM($jenis_perjalanan, $total_km)
+            {
+                $bbm_per_km = 1 / 10;
+                $perkiraan_bbm = round($total_km * $bbm_per_km); // Bulatkan hasil jika koma
+                return $perkiraan_bbm;
+            }
+            function calculatebiaya($perkiraan_bbm)
+            {
+                $harga = 14000;
+                $biaya = $perkiraan_bbm * $harga;
+                return $biaya;
+            }
+            $query .= " ORDER BY tanggal DESC";
+
+            $result = $conn->query($query);
+
+            echo "<h2 class='mt-1'>Semua Laporan Perjalanan</h2>";
+            echo "<div class='search-form'>";
+            echo "<form method='GET' action='dashboard.php'>";
+            echo "<div class='form-row'>";
+            echo "<div class='form-group col-md-4'>";
+            echo "<label for='search'>Cari:</label>";
+            echo "<input type='text' class='form-control' name='search' id='search' value='$search_query'>";
+            echo "</div>";
+            echo "<div class='form-group col-md-4'>";
+            echo "<label for='tanggal_awal'>Tanggal Awal:</label>";
+            echo "<input type='date' class='form-control' name='tanggal_awal' id='tanggal_awal' value='$tanggal_awal'>";
+            echo "</div>";
+            echo "<div class='form-group col-md-4'>";
+            echo "<label for='tanggal_akhir'>Tanggal Akhir:</label>";
+            echo "<input type='date' class='form-control' name='tanggal_akhir' id='tanggal_akhir' value='$tanggal_akhir'>";
+            echo "</div>";
+            echo "</div>";
+            echo "<button class='btn btn-primary' type='submit'><i class='fas fa-search'></i></button>";
+            echo "<button class='btn btn-danger ml-1' type='reset' onclick='window.location.href=\"dashboard.php\"'><i class='fas fa-sync'></i></button>";
+            echo "<a href='download_pdf2.php' class='btn btn-success ml-1'><i class='fas fa-file-pdf'></i></a>";
+            echo "<a href='download_excel2.php' class='btn btn-success ml-1'><i class='fas fa-file-excel'></i></a>";
+            echo "</form>";
+            echo "</div>";
+
+            $total_perjalanan = 0; // Inisialisasi total perjalanan
+            if ($result->num_rows > 0) {
+                echo "<div class='table-responsive table-responsive-sm'>";
+                echo "<table class='table'>";
+                echo "<thead>";
+                echo "<tr>";
+                echo "<th>User</th>";
+                echo "<th>Tanggal</th>";
+                echo "<th>Alamat Awal</th>";
+                echo "<th>Alamat Tujuan</th>";
+                echo "<th>KM Awal</th>";
+                echo "<th>KM Akhir</th>";
+                echo "<th>Total KM</th>";
+                echo "<th>Jenis Perjalanan</th>";
+                echo "<th>Perkiraan BBM</th>";
+                echo "<th>Biaya</th>";
+                echo "</tr>";
+                echo "</thead>";
+                echo "<tbody>";
+                while ($row = $result->fetch_assoc()) {
+                    echo "<tr>";
+                    echo "<td>" . $row['username'] . "</td>";
+                    echo "<td>" . $row['tanggal'] . "</td>";
+                    echo "<td>" . $row['alamat_awal'] . "</td>";
+                    echo "<td>" . $row['alamat_tujuan'] . "</td>";
+                    echo "<td>" . $row['km_awal'] . "</td>";
+                    echo "<td>" . $row['km_akhir'] . "</td>";
+                    $total_km = $row['km_akhir'] - $row['km_awal'];
+                    $jenis_perjalanan = $row['jenis_perjalanan'];
+                    $perkiraan_bbm = calculateBBM($jenis_perjalanan, $total_km);
+                    $biaya = calculatebiaya($perkiraan_bbm);
+
+                    echo "<td>" . $total_km . "</td>";
+                    echo "<td>" . $jenis_perjalanan . "</td>";
+                    echo "<td>" . $perkiraan_bbm . " Liter</td>";
+                    echo "<td>RP " . $biaya . "</td>";
+                    echo "<td>";
+                    //echo "<a href='download_pdf2.php?id=" . $row['id'] . "' class='btn btn-success'>download</a>";
+                    echo "</td>";
+                    echo "</tr>"; // Tutup baris data saat ini
+                    // Akumulasi total jarak tempuh untuk pencarian
+                    $total_perjalanan += $total_km;
+                }
+
+                // Cetak total perjalanan setelah perulangan
+                echo "<h4>Total Jarak Tempuh : " . $total_perjalanan . " KM</h4>";
+                echo "</tbody>";
+                echo "</table>";
+                echo "</div>";
+                echo "</div>";
+            } else {
+                echo "Belum ada laporan perjalanan.";
+            }
         }
         $conn->close();
         ?>
