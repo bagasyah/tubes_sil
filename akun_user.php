@@ -66,8 +66,6 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark">
         <a class="navbar-brand" href="dashboard.php">
-            <img src="assets/pgn.png" width="130" height="30" class="mr-2">
-            <span class="separator"></span>
             SAFETY DRIVE
         </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"

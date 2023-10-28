@@ -137,9 +137,12 @@
 
                 $role = $_SESSION['role'];
 
+
                 if ($role == 'user') {
                     echo "<li class='nav-item'><a class='nav-link btn mb-1 mr-2 text-light btn-tambah' href='create.php'><i class='fas fa-plus'></i> Tambah Perjalanan</a></li>";
                     echo "<li class='nav-item'><a class='nav-link btn mb-1 mr-2 text-light btn-success' href='data_perjalanan.php'><i class='fas fa-car'></i> Data Perjalanan</a></li>";
+                } elseif ($role == 'admin') {
+                    echo "<li class='nav-item'><a class='nav-link btn mb-1 mr-2 text-light btn-success' href='akun_user.php'><i class='fas fa-users'></i> Kelola Pengguna</a></li>";
                 }
                 echo "<li class='nav-item'><a class='nav-link btn mb-1 text-light btn-danger' href='logout.php'><i class='fas fa-sign-out-alt'></i> Logout</a></li>";
                 ?>
@@ -414,11 +417,10 @@
                     $jenis_perjalanan = $row['jenis_perjalanan'];
                     $perkiraan_bbm = calculateBBM($jenis_perjalanan, $total_km);
                     $biaya = calculatebiaya($perkiraan_bbm);
-
                     echo "<td>" . $total_km . "</td>";
                     echo "<td>" . $jenis_perjalanan . "</td>";
                     echo "<td>" . $perkiraan_bbm . " Liter</td>";
-                    echo "<td>RP " . $biaya . "</td>";
+                    echo "<td>RP." . $biaya . "</td>";
                     echo "<td>";
                     //echo "<a href='download_pdf2.php?id=" . $row['id'] . "' class='btn btn-success'>download</a>";
                     echo "</td>";
