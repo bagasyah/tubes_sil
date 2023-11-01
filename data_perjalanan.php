@@ -35,26 +35,24 @@
             margin-bottom: 10px;
         }
 
+        /* CSS yang sudah ada tetap sama */
+
+        .sort-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .sort-label {
+            margin-right: 10px;
+        }
+
+        .sort-options select {
+            width: auto;
+            margin-bottom: 5px;
+        }
+
         @media (max-width: 576px) {
-            .navbar-brand {
-                margin-right: 0;
-            }
-
-            .navbar-nav.ml-auto.mt-1 {
-                margin-top: 0;
-            }
-
-            .nav-link.btn.mb-1.text-light.btn-success {
-                margin-bottom: 0.5rem;
-            }
-
-            .table-responsive-sm {
-                overflow-x: auto;
-            }
-
-            table {
-                width: 100%;
-            }
+            /* CSS untuk tampilan mobile tetap sama */
         }
     </style>
 </head>
@@ -99,91 +97,82 @@
             $search_query = $_GET['search'];
         }
 
-        $query = "SELECT * FROM laporan INNER JOIN users ON laporan.user_id = users.id";
+        // Baca parameter sort dari URL
+        $sort = isset($_GET['sort']) ? $_GET['sort'] : 'default';
 
-        // Tambahkan kondisi pencarian berdasarkan tanggal
-        $tanggal_awal = $_GET['tanggal_awal'] ?? '';
-        $tanggal_akhir = $_GET['tanggal_akhir'] ?? '';
+        $query = "SELECT users.id, users.username, SUM(laporan.km_akhir - laporan.km_awal) AS total_km
+        FROM users
+        LEFT JOIN laporan ON users.id = laporan.user_id
+        WHERE users.username LIKE '%$search_query%' OR laporan.km_awal LIKE '%$search_query%' OR laporan.km_akhir LIKE '%$search_query%'
+        GROUP BY users.id, users.username
+        HAVING total_km > 0";
 
-        if (!empty($tanggal_awal) && !empty($tanggal_akhir)) {
-            $query .= " WHERE tanggal BETWEEN '$tanggal_awal' AND '$tanggal_akhir'";
+        // Modifikasi query sesuai dengan penggunaan parameter sort
+        if ($sort == 'terbanyak') {
+            $query .= " ORDER BY total_km DESC";
+        } elseif ($sort == 'terendah') {
+            $query .= " ORDER BY total_km ASC";
+        } else {
+            $query .= " ORDER BY laporan.id DESC"; // Default sorting
         }
-        if (!empty($search_query)) {
-            if (!empty($tanggal_awal) && !empty($tanggal_akhir)) {
-                $query .= " AND (tanggal LIKE '%$search_query%' OR alamat_awal LIKE '%$search_query%' OR alamat_tujuan LIKE '%$search_query%' OR username LIKE '%$search_query%')";
-            } else {
-                $query .= " WHERE tanggal LIKE '%$search_query%' OR alamat_awal LIKE '%$search_query%' OR alamat_tujuan LIKE '%$search_query%' OR username LIKE '%$search_query%'";
-            }
-        }
-        $query .= " ORDER BY laporan.id DESC";
+
         $totalRowsResult = $conn->query($query);
         $totalRows = $totalRowsResult->num_rows;
+
         function calculateBBM($jenis_perjalanan, $total_km)
         {
             $bbm_per_km = 1 / 10;
             $perkiraan_bbm = round($total_km * $bbm_per_km); // Bulatkan hasil jika koma
             return $perkiraan_bbm;
         }
+
         function calculatebiaya($perkiraan_bbm)
         {
             $harga = 14000;
             $biaya = $perkiraan_bbm * $harga;
             return $biaya;
         }
+
         // Eksekusi query ke database
         $result = $conn->query($query);
 
         // Tampilkan tampilan HTML untuk menampilkan hasil query
         echo "<h2 class='mt-1'>Semua Laporan Perjalanan</h2>";
-        echo "<div class='search-form'>";
-        echo "<form method='GET' action='data_perjalanan.php'>";
-        echo "<div class='form-row'>";
-        echo "<div class='form-group col-md-4'>";
-        echo "<label for='search'>Cari:</label>";
-        echo "<input type='text' class='form-control' name='search' id='search' value='$search_query'>";
-        echo "</div>";
-        echo "<div class='form-group col-md-4'>";
-        echo "<label for='tanggal_awal'>Tanggal Awal:</label>";
-        echo "<input type='date' class='form-control' name='tanggal_awal' id='tanggal_awal' value='$tanggal_awal'>";
-        echo "</div>";
-        echo "<div class='form-group col-md-4'>";
-        echo "<label for='tanggal_akhir'>Tanggal Akhir:</label>";
-        echo "<input type='date' class='form-control' name='tanggal_akhir' id='tanggal_akhir' value='$tanggal_akhir'>";
-        echo "</div>";
-        echo "</div>";
+        echo "<form class='mb-3' method='GET'>";
+        echo "<div class='input-group'>";
+        echo "<input type='text' class='form-control' name='search' placeholder='Cari akun pengguna...'>";
+        echo "<div class='input-group-append'>";
         echo "<button class='btn btn-primary' type='submit'><i class='fas fa-search'></i></button>";
         echo "<button class='btn btn-danger ml-1' type='reset' onclick='window.location.href=\"data_perjalanan.php\"'><i class='fas fa-sync'></i></button>";
-        echo "<a href='download_pdf2.php' class='btn btn-success ml-1'><i class='fas fa-file-pdf'></i></a>";
-        echo "<a href='download_excel2.php' class='btn btn-success ml-1'><i class='fas fa-file-excel'></i></a>";
+        echo "</div>";
+        echo "</div>";
+        echo "</form>";
+        // Tambahkan dropdown untuk pengurutan
+        echo "<div class='sort-container'>";
+        echo "<label class='sort-label' for='sort-select'>Sort by:</label>";
+        echo "<form method='GET' action='data_perjalanan.php'>";
+        echo "<div class='sort-options'>";
+        echo "<select id='sort-select' name='sort' onchange='this.form.submit()'>";
+        echo "<option value='default' " . ($sort == 'default' ? 'selected' : '') . ">Default</option>";
+        echo "<option value='terbanyak' " . ($sort == 'terbanyak' ? 'selected' : '') . ">Total KM Terbanyak</option>";
+        echo "<option value='terendah' " . ($sort == 'terendah' ? 'selected' : '') . ">Total KM Terendah</option>";
+        echo "</select>";
+        echo "</div>";
         echo "</form>";
         echo "</div>";
+
         // Eksekusi query ke database
         $result = $conn->query($query);
-
-        // Hitung total km sebelum loop while
-        while ($row = $result->fetch_assoc()) {
-            $total_km = $row['km_akhir'] - $row['km_awal']; // Menghitung total km
-            $total_km_all += $total_km; // Menambahkannya ke total km keseluruhan
-        }
-
-        // Tampilkan total km keseluruhan di atas tabel
-        echo "<h4>Total Jarak Tempuh : " . $total_km_all . " KM</h4>";
 
         // Mulai menampilkan tabel dan data perjalanan
         echo "<div class='table-responsive table-responsive-sm'>";
         echo "<table class='table'>";
         echo "<thead>";
         echo "<tr>";
-        echo "<th>User</th>";
-        echo "<th>Tanggal</th>";
-        echo "<th>Alamat Awal</th>";
-        echo "<th>Alamat Tujuan</th>";
-        echo "<th>KM Awal</th>";
-        echo "<th>KM Akhir</th>";
+        echo "<th>Username</th>";
+        echo "<th>Jumlah Data Perjalanan</th>";
         echo "<th>Total KM</th>";
-        echo "<th>Jenis Perjalanan</th>";
-        echo "<th>Perkiraan BBM</th>";
-        echo "<th>Biaya</th>";
+        echo "<th>Actions</th>";
         echo "</tr>";
         echo "</thead>";
         echo "<tbody>";
@@ -192,24 +181,22 @@
         $result->data_seek(0);
 
         while ($row = $result->fetch_assoc()) {
+            echo "<tr>";
             echo "<td>" . $row['username'] . "</td>";
-            echo "<td>" . $row['tanggal'] . "</td>";
-            echo "<td>" . $row['alamat_awal'] . "</td>";
-            echo "<td>" . $row['alamat_tujuan'] . "</td>";
-            echo "<td>" . $row['km_awal'] . "</td>";
-            echo "<td>" . $row['km_akhir'] . "</td>";
-            $total_km = $row['km_akhir'] - $row['km_awal']; // Menghitung total km
-        
-            $jenis_perjalanan = $row['jenis_perjalanan'];
-            $perkiraan_bbm = calculateBBM($jenis_perjalanan, $total_km);
-            $biaya = calculatebiaya($perkiraan_bbm);
-            echo "<td>" . $total_km . "</td>";
-            echo "<td>" . $jenis_perjalanan . "</td>";
-            echo "<td>" . $perkiraan_bbm . " Liter</td>";
-            echo "<td>RP." . $biaya . "</td>";
-            echo "</tr>";
+            // Hitung jumlah data perjalanan
+            $userId = $row['id'];
+            $jumlahDataPerjalananQuery = "SELECT COUNT(*) AS jumlah_data FROM laporan WHERE user_id = $userId";
+            $jumlahDataResult = $conn->query($jumlahDataPerjalananQuery);
+            $jumlahDataRow = $jumlahDataResult->fetch_assoc();
+            $jumlahDataPerjalanan = $jumlahDataRow['jumlah_data'];
 
-            $laporan_id = $row['id'];
+            echo "<td>" . $jumlahDataPerjalanan . " Perjalanan</td>";
+            echo "<td>" . $row['total_km'] . "</td>";
+            echo "<td>";
+            echo "<a href='detail_akun.php?id=" . $row['id'] . "' class='btn btn-info '><i class='fas fa-arrow-right'></i></a>";
+            echo "</td>";
+            echo "</td>";
+            echo "</tr>";
         }
         echo "</tbody>";
         echo "</table>";

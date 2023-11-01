@@ -60,6 +60,20 @@
             border-right: 2px solid #fff;
             width: 100%;
         }
+
+        .sort-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .sort-label {
+            margin-right: 10px;
+        }
+
+        .sort-options select {
+            width: auto;
+            margin-bottom: 5px;
+        }
     </style>
 </head>
 
@@ -109,6 +123,9 @@
                 }
             }
 
+            // Tambahkan baris ini untuk mendefinisikan variabel $sort
+            $sort = isset($_GET['sort']) ? $_GET['sort'] : 'default';
+
             if ($role == 'admin') {
                 if (isset($_GET['delete'])) {
                     $delete_id = $_GET['delete'];
@@ -132,6 +149,14 @@
                 FROM users LEFT JOIN laporan ON users.id = laporan.user_id 
                 GROUP BY users.id, users.username, users.password, users.role, users.status";
 
+                // Modifikasi query sesuai dengan penggunaan parameter sort
+                if ($sort == 'terbanyak') {
+                    $query .= " ORDER BY total_km DESC";
+                } elseif ($sort == 'terendah') {
+                    $query .= " ORDER BY total_km ASC";
+                } else {
+                    $query .= " ORDER BY laporan.id DESC"; // Default sorting
+                }
 
                 // Mengatur kata kunci pencarian jika ada
                 if (isset($_GET['search'])) {
@@ -178,6 +203,20 @@
                 echo "</div>";
                 echo "</form>";
 
+                // Tambahkan dropdown untuk pengurutan
+                echo "<div class='sort-container'>";
+                echo "<label class='sort-label' for='sort-select'>Sort by:</label>";
+                echo "<form method='GET' action='akun_user.php'>";
+                echo "<div class='sort-options'>";
+                echo "<select id='sort-select' name='sort' onchange='this.form.submit()'>";
+                echo "<option value='default' " . ($sort == 'default' ? 'selected' : '') . ">Default</option>";
+                echo "<option value='terbanyak' " . ($sort == 'terbanyak' ? 'selected' : '') . ">Total KM Terbanyak</option>";
+                echo "<option value='terendah' " . ($sort == 'terendah' ? 'selected' : '') . ">Total KM Terendah</option>";
+                echo "</select>";
+                echo "</div>";
+                echo "</form>";
+                echo "</div>";
+
                 if ($result->num_rows > 0) {
                     echo "<div class='table-responsive'>";
                     echo "<table class='table'>";
@@ -202,7 +241,7 @@
                         echo "<td>";
                         echo "<a href='edit_akun.php?id=" . $row['id'] . "' class='btn btn-primary mt-1'><i class='fas fa-pencil-alt'></i></a> ";
                         echo "<a href='javascript:void(0);' class='btn btn-danger mr-1 mt-1' onclick='confirmDelete(" . $row['id'] . ")'><i class='fas fa-trash-alt'></i></a>";
-                        echo "<a href='detail.php?id=" . $row['id'] . "' class='btn btn-info mt-1'><i class='fas fa-arrow-right'></i></a>";
+                        echo "<a href='detail_akun.php?id=" . $row['id'] . "' class='btn btn-info mt-1'><i class='fas fa-arrow-right'></i></a>";
                         echo "</td>";
                         echo "</td>";
                         echo "</tr>";
