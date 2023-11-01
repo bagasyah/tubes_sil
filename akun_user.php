@@ -144,9 +144,14 @@
                         echo "<div class='alert alert-danger'>Gagal menghapus laporan terkait.</div>";
                     }
                 }
-
+                // Mengatur kata kunci pencarian jika ada
+                $search_query = "";
+                if (isset($_GET['search'])) {
+                    $search_query = $_GET['search'];
+                }
                 $query = "SELECT users.id, users.username, users.password, users.role, users.status, SUM(laporan.km_akhir - laporan.km_awal) AS total_km 
                 FROM users LEFT JOIN laporan ON users.id = laporan.user_id 
+                WHERE users.username LIKE '%$search_query%'
                 GROUP BY users.id, users.username, users.password, users.role, users.status";
 
                 // Modifikasi query sesuai dengan penggunaan parameter sort
@@ -158,11 +163,7 @@
                     $query .= " ORDER BY laporan.id DESC"; // Default sorting
                 }
 
-                // Mengatur kata kunci pencarian jika ada
-                if (isset($_GET['search'])) {
-                    $search = $_GET['search'];
-                    $query .= " HAVING users.username LIKE '%$search%'";
-                }
+
 
                 $result = $conn->query($query);
 
