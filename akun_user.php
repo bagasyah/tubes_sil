@@ -77,12 +77,11 @@
                 <?php
                 session_start();
                 if (!isset($_SESSION['user_id'])) {
-                    header("Location: login.php");
+                    header("Location: index.php");
                     exit();
                 }
 
-                $role = $_SESSION['role'];
-                echo "<li class='nav-item'><a class='nav-link btn mb-1 mr-2 text-light btn-success' href='dashboard.php'><i class='fas fa-chevron-left'></i> Back</a></li>";
+                echo "<li class='nav-item'><a class='nav-link btn mb-1 mr-2 text-light btn-success' href='statistik_admin.php'><i class='fas fa-chevron-left'></i> Back</a></li>";
                 echo "<li class='nav-item'><a class='nav-link btn mb-1 mr-2 text-light btn-danger' href='logout.php'><i class='fas fa-sign-out-alt'></i> Logout</a></li>";
                 ?>
             </ul>
@@ -109,109 +108,107 @@
                 }
             }
 
-            if ($role == 'admin') {
-                if (isset($_GET['delete'])) {
-                    $delete_id = $_GET['delete'];
+            if (isset($_GET['delete'])) {
+                $delete_id = $_GET['delete'];
 
-                    // Hapus laporan terlebih dahulu
-                    $delete_laporan_query = "DELETE FROM laporan WHERE user_id='$delete_id'";
-                    if ($conn->query($delete_laporan_query) === TRUE) {
-                        // Setelah laporan dihapus, hapus akun pengguna
-                        $delete_query = "DELETE FROM users WHERE id='$delete_id'";
-                        if ($conn->query($delete_query) === TRUE) {
-                            echo "<div class='alert alert-success'>Akun pengguna berhasil dihapus.</div>";
-                        } else {
-                            echo "<div class='alert alert-danger'>Gagal menghapus akun pengguna.</div>";
-                        }
+                // Hapus laporan terlebih dahulu
+                $delete_laporan_query = "DELETE FROM laporan WHERE user_id='$delete_id'";
+                if ($conn->query($delete_laporan_query) === TRUE) {
+                    // Setelah laporan dihapus, hapus akun pengguna
+                    $delete_query = "DELETE FROM users WHERE id='$delete_id'";
+                    if ($conn->query($delete_query) === TRUE) {
+                        echo "<div class='alert alert-success'>Akun pengguna berhasil dihapus.</div>";
                     } else {
-                        echo "<div class='alert alert-danger'>Gagal menghapus laporan terkait.</div>";
+                        echo "<div class='alert alert-danger'>Gagal menghapus akun pengguna.</div>";
                     }
-                }
-
-                $query = "SELECT users.id, users.username, users.password, users.role, users.status, SUM(laporan.km_akhir - laporan.km_awal) AS total_km 
-                FROM users LEFT JOIN laporan ON users.id = laporan.user_id 
-                GROUP BY users.id, users.username, users.password, users.role, users.status";
-
-
-                // Mengatur kata kunci pencarian jika ada
-                if (isset($_GET['search'])) {
-                    $search = $_GET['search'];
-                    $query .= " HAVING users.username LIKE '%$search%'";
-                }
-
-                $result = $conn->query($query);
-
-                echo "<h2 class='mt-3'>Akun Pengguna</h2>";
-
-                // Tampilkan form pencarian
-                echo "<form class='mb-3' method='GET'>";
-                echo "<div class='input-group'>";
-                echo "<input type='text' class='form-control' name='search' placeholder='Cari akun pengguna...'>";
-                echo "<div class='input-group-append'>";
-                echo "<button class='btn btn-primary' type='submit'><i class='fas fa-search'></i></button>";
-                echo "<button class='btn btn-danger ml-1' type='reset' onclick='window.location.href=\"akun_user.php\"'><i class='fas fa-sync'></i></button>";
-                echo "</div>";
-                echo "</div>";
-                echo "</form>";
-
-                // Add a new form to create user accounts
-                echo "<form class='mb-3' method='POST'>";
-                echo "<div class='form-row'>";
-                echo "<div class='col-md-4 mb-3'>";
-                echo "<label for='username'>Username</label>";
-                echo "<input type='text' class='form-control' id='username' name='username' required>";
-                echo "</div>";
-                echo "<div class='col-md-4 mb-3'>";
-                echo "<label for='password'>Password</label>";
-                echo "<input type='password' class='form-control' id='password' name='password' required>";
-                echo "</div>";
-                echo "<div class='col-md-4 mb-3'>"; // Adjusted the column size to fit the "Role" and "Create" button in the same row
-                echo "<label for='role'>Role</label>";
-                echo "<select class='form-control' id='role' name='role' required>";
-                echo "<option value='admin'>Admin</option>";
-                echo "<option value='user'>User</option>";
-                echo "</select>";
-                echo "</div>";
-                echo "<div class='col-md-4 mb-3'>"; // Adjusted the column size to fit the "Role" and "Create" button in the same row
-                echo "<button type='submit' class='btn btn-success' name='create_user'><i class='fas fa-edit'></i> Create</button>";
-                echo "</div>";
-                echo "</div>";
-                echo "</form>";
-
-                if ($result->num_rows > 0) {
-                    echo "<div class='table-responsive'>";
-                    echo "<table class='table'>";
-                    echo "<thead>";
-                    echo "<tr>";
-                    echo "<th>Username</th>";
-                    echo "<th>Password</th>";
-                    echo "<th>Role</th>";
-                    echo "<th>Status</th>";
-                    echo "<th>Total KM</th>";
-                    echo "<th>Actions</th>";
-                    echo "</tr>";
-                    echo "</thead>";
-                    echo "<tbody>";
-                    while ($row = $result->fetch_assoc()) {
-                        echo "<tr>";
-                        echo "<td>" . $row['username'] . "</td>";
-                        echo "<td>" . $row['password'] . "</td>";
-                        echo "<td>" . $row['role'] . "</td>";
-                        echo "<td>" . $row['status'] . "</td>";
-                        echo "<td>" . $row['total_km'] . "</td>";
-                        echo "<td>";
-                        echo "<a href='edit_akun.php?id=" . $row['id'] . "' class='btn btn-primary mt-1'><i class='fas fa-pencil-alt'></i></a> ";
-                        echo "<a href='javascript:void(0);' class='btn btn-danger mr-1 mt-1' onclick='confirmDelete(" . $row['id'] . ")'><i class='fas fa-trash-alt'></i></a>";
-                        echo "<a href='detail.php?id=" . $row['id'] . "' class='btn btn-info mt-1'><i class='fas fa-arrow-right'></i></a>";
-                        echo "</td>";
-                        echo "</td>";
-                        echo "</tr>";
-                    }
-                    echo "</tbody>";
-                    echo "</table>";
                 } else {
-                    echo "Belum ada akun pengguna terdaftar.";
+                    echo "<div class='alert alert-danger'>Gagal menghapus laporan terkait.</div>";
                 }
+            }
+
+            $query = "SELECT users.id, users.username, users.password, users.role, users.status, SUM(laporan.km_akhir - laporan.km_awal) AS total_km 
+            FROM users LEFT JOIN laporan ON users.id = laporan.user_id 
+            GROUP BY users.id, users.username, users.password, users.role, users.status";
+
+
+            // Mengatur kata kunci pencarian jika ada
+            if (isset($_GET['search'])) {
+                $search = $_GET['search'];
+                $query .= " HAVING users.username LIKE '%$search%'";
+            }
+
+            $result = $conn->query($query);
+
+            echo "<h2 class='mt-3'>Akun Pengguna</h2>";
+
+            // Tampilkan form pencarian
+            echo "<form class='mb-3' method='GET'>";
+            echo "<div class='input-group'>";
+            echo "<input type='text' class='form-control' name='search' placeholder='Cari akun pengguna...'>";
+            echo "<div class='input-group-append'>";
+            echo "<button class='btn btn-primary' type='submit'><i class='fas fa-search'></i></button>";
+            echo "<button class='btn btn-danger ml-1' type='reset' onclick='window.location.href=\"akun_user.php\"'><i class='fas fa-sync'></i></button>";
+            echo "</div>";
+            echo "</div>";
+            echo "</form>";
+
+            // Add a new form to create user accounts
+            echo "<form class='mb-3' method='POST'>";
+            echo "<div class='form-row'>";
+            echo "<div class='col-md-4 mb-3'>";
+            echo "<label for='username'>Username</label>";
+            echo "<input type='text' class='form-control' id='username' name='username' required>";
+            echo "</div>";
+            echo "<div class='col-md-4 mb-3'>";
+            echo "<label for='password'>Password</label>";
+            echo "<input type='password' class='form-control' id='password' name='password' required>";
+            echo "</div>";
+            echo "<div class='col-md-4 mb-3'>"; // Adjusted the column size to fit the "Role" and "Create" button in the same row
+            echo "<label for='role'>Role</label>";
+            echo "<select class='form-control' id='role' name='role' required>";
+            echo "<option value='admin'>Admin</option>";
+            echo "<option value='user'>User</option>";
+            echo "</select>";
+            echo "</div>";
+            echo "<div class='col-md-4 mb-3'>"; // Adjusted the column size to fit the "Role" and "Create" button in the same row
+            echo "<button type='submit' class='btn btn-success' name='create_user'><i class='fas fa-edit'></i> Create</button>";
+            echo "</div>";
+            echo "</div>";
+            echo "</form>";
+
+            if ($result->num_rows > 0) {
+                echo "<div class='table-responsive'>";
+                echo "<table class='table'>";
+                echo "<thead>";
+                echo "<tr>";
+                echo "<th>Username</th>";
+                echo "<th>Password</th>";
+                echo "<th>Role</th>";
+                echo "<th>Status</th>";
+                echo "<th>Total KM</th>";
+                echo "<th>Actions</th>";
+                echo "</tr>";
+                echo "</thead>";
+                echo "<tbody>";
+                while ($row = $result->fetch_assoc()) {
+                    echo "<tr>";
+                    echo "<td>" . $row['username'] . "</td>";
+                    echo "<td>" . $row['password'] . "</td>";
+                    echo "<td>" . $row['role'] . "</td>";
+                    echo "<td>" . $row['status'] . "</td>";
+                    echo "<td>" . $row['total_km'] . "</td>";
+                    echo "<td>";
+                    echo "<a href='edit_akun.php?id=" . $row['id'] . "' class='btn btn-primary mt-1'><i class='fas fa-pencil-alt'></i></a> ";
+                    echo "<a href='javascript:void(0);' class='btn btn-danger mr-1 mt-1' onclick='confirmDelete(" . $row['id'] . ")'><i class='fas fa-trash-alt'></i></a>";
+                    echo "<a href='detail.php?id=" . $row['id'] . "' class='btn btn-info mt-1'><i class='fas fa-arrow-right'></i></a>";
+                    echo "</td>";
+                    echo "</td>";
+                    echo "</tr>";
+                }
+                echo "</tbody>";
+                echo "</table>";
+            } else {
+                echo "Belum ada akun pengguna terdaftar.";
             }
 
             $conn->close();
