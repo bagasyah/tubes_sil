@@ -166,7 +166,6 @@
             $result = $conn->query($query);
 
             echo "<h2 class='mt-3'>Akun Pengguna</h2>";
-            echo "<h2 class='mt-3'>Akun Pengguna</h2>";
 
             // Tampilkan form pencarian
             echo "<form class='mb-3' method='GET'>";
@@ -251,7 +250,6 @@
                 } else {
                     echo "Belum ada akun pengguna terdaftar.";
                 }
-            }
 
             $conn->close();
             ?>
