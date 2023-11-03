@@ -91,12 +91,11 @@
                 <?php
                 session_start();
                 if (!isset($_SESSION['user_id'])) {
-                    header("Location: login.php");
+                    header("Location: index.php");
                     exit();
                 }
 
-                $role = $_SESSION['role'];
-                echo "<li class='nav-item'><a class='nav-link btn mb-1 mr-2 text-light btn-success' href='dashboard.php'><i class='fas fa-chevron-left'></i> Back</a></li>";
+                echo "<li class='nav-item'><a class='nav-link btn mb-1 mr-2 text-light btn-success' href='statistik_admin.php'><i class='fas fa-chevron-left'></i> Back</a></li>";
                 echo "<li class='nav-item'><a class='nav-link btn mb-1 mr-2 text-light btn-danger' href='logout.php'><i class='fas fa-sign-out-alt'></i> Logout</a></li>";
                 ?>
             </ul>
@@ -126,9 +125,8 @@
             // Tambahkan baris ini untuk mendefinisikan variabel $sort
             $sort = isset($_GET['sort']) ? $_GET['sort'] : 'default';
 
-            if ($role == 'admin') {
-                if (isset($_GET['delete'])) {
-                    $delete_id = $_GET['delete'];
+            if (isset($_GET['delete'])) {
+                $delete_id = $_GET['delete'];
 
                     // Hapus laporan terlebih dahulu
                     $delete_laporan_query = "DELETE FROM laporan WHERE user_id='$delete_id'";
@@ -165,20 +163,20 @@
 
 
 
-                $result = $conn->query($query);
+            $result = $conn->query($query);
 
-                echo "<h2 class='mt-3'>Akun Pengguna</h2>";
+            echo "<h2 class='mt-3'>Akun Pengguna</h2>";
 
-                // Tampilkan form pencarian
-                echo "<form class='mb-3' method='GET'>";
-                echo "<div class='input-group'>";
-                echo "<input type='text' class='form-control' name='search' placeholder='Cari akun pengguna...'>";
-                echo "<div class='input-group-append'>";
-                echo "<button class='btn btn-primary' type='submit'><i class='fas fa-search'></i></button>";
-                echo "<button class='btn btn-danger ml-1' type='reset' onclick='window.location.href=\"akun_user.php\"'><i class='fas fa-sync'></i></button>";
-                echo "</div>";
-                echo "</div>";
-                echo "</form>";
+            // Tampilkan form pencarian
+            echo "<form class='mb-3' method='GET'>";
+            echo "<div class='input-group'>";
+            echo "<input type='text' class='form-control' name='search' placeholder='Cari akun pengguna...'>";
+            echo "<div class='input-group-append'>";
+            echo "<button class='btn btn-primary' type='submit'><i class='fas fa-search'></i></button>";
+            echo "<button class='btn btn-danger ml-1' type='reset' onclick='window.location.href=\"akun_user.php\"'><i class='fas fa-sync'></i></button>";
+            echo "</div>";
+            echo "</div>";
+            echo "</form>";
 
                 // Add a new form to create user accounts
                 echo "<form class='mb-3' method='POST'>";

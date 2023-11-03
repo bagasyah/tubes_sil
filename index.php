@@ -13,10 +13,14 @@ if (isset($_POST['login'])) {
 
     if ($result->num_rows == 1) {
         $row = $result->fetch_assoc();
-        if ($row['status'] == 'approved') {
+        if ($row['status'] == 'approved' && $row['role'] == 'user') {
             $_SESSION['user_id'] = $row['id'];
             $_SESSION['role'] = $row['role'];
-            header("Location: dashboard.php");
+            header("Location: statistik_user.php");
+        } else if ($row['status'] == 'approved' && $row['role'] == 'admin'){
+            $_SESSION['user_id'] = $row['id'];
+            $_SESSION['role'] = $row['role'];
+            header("Location: statistik_admin.php");
         } else {
             $errorMessage = 'Registrasi Anda belum disetujui oleh admin.';
         }
@@ -29,7 +33,6 @@ if (isset($_POST['login'])) {
 <head>
     <title>Login - Nama Aplikasi Anda</title>
     <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/login.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body {

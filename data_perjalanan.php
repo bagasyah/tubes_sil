@@ -59,7 +59,7 @@
 
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark">
-        <a class="navbar-brand" href="dashboard.php">
+        <a class="navbar-brand" href="statistik_user.php">
             SAFETY DRIVE
         </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
@@ -71,7 +71,7 @@
             </ul>
             <ul class="navbar-nav ml-auto mt-1">
                 <?php
-                echo "<li class='nav-item'><a class='nav-link btn mb-1 mr-2 text-light btn-success' href='dashboard.php'><i class='fas fa-chevron-left'></i> Back</a></li>";
+                echo "<li class='nav-item'><a class='nav-link btn mb-1 mr-2 text-light btn-success' href='statistik_user.php'><i class='fas fa-chevron-left'></i> Back</a></li>";
                 echo "<li class='nav-item'><a class='nav-link btn mb-1 mr-2 text-light btn-danger' href='logout.php'><i class='fas fa-sign-out-alt'></i> Logout</a></li>";
                 ?>
             </ul>
