@@ -79,7 +79,7 @@
 
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark">
-        <a class="navbar-brand" href="dashboard.php">
+        <a class="navbar-brand" href="statistik_user.php">
             SAFETY DRIVE
         </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"

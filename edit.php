@@ -19,7 +19,7 @@ if (isset($_POST['submit'])) {
     // No new photo uploaded, update other fields in the database
     $query = "UPDATE laporan SET tanggal='$tanggal', alamat_awal='$alamat_awal', alamat_tujuan='$alamat_tujuan', km_awal='$km_awal', km_akhir='$km_akhir',jenis_perjalanan='$jenis_perjalanan' WHERE id='$id'";
     if ($conn->query($query) === TRUE) {
-        header("Location: dashboard.php");
+        header("Location: statistik_user.php");
         exit();
     } else {
         echo "Error: " . $query . "<br>" . $conn->error;
