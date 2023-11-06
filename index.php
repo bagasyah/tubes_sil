@@ -31,7 +31,7 @@ if (isset($_POST['login'])) {
 ?>
 
 <head>
-    <title>Login - Nama Aplikasi Anda</title>
+    <title>Login - SILPK</title>
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>

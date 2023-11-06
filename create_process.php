@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $query = "INSERT INTO laporan (user_id, tanggal, alamat_awal, alamat_tujuan, km_awal, km_akhir, jenis_perjalanan) VALUES ('$user_id', '$tanggal', '$alamat_awal', '$alamat_tujuan', '$km_awal', '$km_akhir', '$jenis_perjalanan')";
 
     if ($conn->query($query) === TRUE) {
-        header("Location: statistik_user.php");
+        header("Location: data_perjalanan_user.php");
         exit();
     } else {
         echo "Error: " . $query . "<br>" . $conn->error;

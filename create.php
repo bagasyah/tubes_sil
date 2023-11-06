@@ -78,7 +78,7 @@
             <div class="form-group">
                 <button type="submit" class="btn btn-success" name="submit">Submit</button>
                 <button type="button" class="btn btn-danger"
-                    onclick="window.location.href='statistik_user.php'">Cancel</button>
+                    onclick="window.location.href='data_perjalanan_user.php'">Cancel</button>
             </div>
         </form>
     </div>

@@ -29,8 +29,7 @@
 
                 $role = $_SESSION['role'];
 
-                echo "<li class='nav-item'><a class='nav-link btn mb-1 mr-2 text-light btn-tambah' href='create.php'><i class='fas fa-plus'></i> Tambah Perjalanan</a></li>";
-                echo "<li class='nav-item'><a class='nav-link btn mb-1 mr-2 text-light btn-success' href='data_perjalanan.php'><i class='fas fa-car'></i> Data Perjalanan</a></li>";
+                echo "<li class='nav-item'><a class='nav-link btn mb-1 mr-2 text-light btn-success' href='data_perjalanan_user.php'><i class='fas fa-car'></i> Data Perjalanan</a></li>";
                 echo "<li class='nav-item'><a class='nav-link btn mb-1 text-light btn-danger' href='logout.php'><i class='fas fa-sign-out-alt'></i> Logout</a></li>";
                 ?>
             </ul>
@@ -147,7 +146,7 @@
                 <canvas id="stats-jenis" class="piechart" style="width:100%; height: 100%;"></canvas>
             </div>
             <div class="stats-item">
-                <h6 class="stats">Frekuensi Input</h6>
+                <h6 class="stats"> Frekuensi Input Bulanan</h6>
                 <canvas id="stats-tanggal" class="linechart" style="width:100%; height: 100%;"></canvas>
             </div>
         </div>
@@ -198,6 +197,9 @@
             options: {
                 legend: {
                     display: false,
+                },
+                scales:{
+                    yAxes: [{ticks: {min: 0, max:5}}],
                 }
             }
         });

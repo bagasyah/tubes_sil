@@ -28,6 +28,7 @@
                 }
                 
                 echo "<li class='nav-item'><a class='nav-link btn mb-1 mr-2 text-light btn-success' href='akun_user.php'><i class='fas fa-users'></i> Kelola Pengguna</a></li>";
+                echo "<li class='nav-item'><a class='nav-link btn mb-1 mr-2 text-light btn-success' href='data_perjalanan_admin.php'><i class='fas fa-car'></i> Data Perjalanan</a></li>";
                 echo "<li class='nav-item'><a class='nav-link btn mb-1 text-light btn-danger' href='logout.php'><i class='fas fa-sign-out-alt'></i> Logout</a></li>";
                 ?>
             </ul>
@@ -93,6 +94,21 @@
                 $jumlah_dataArray[] = $jumlah_data;
             }
 
+           // Mencari 3 pengguna dengan kilometer terbanyak
+            $top5_km_user_query = "SELECT users.username, SUM(laporan.km_akhir - laporan.km_awal) AS total_km FROM laporan INNER JOIN users ON laporan.user_id = users.id GROUP BY laporan.user_id, users.username ORDER BY total_km DESC LIMIT 5"; // Batasan 3 pengguna
+            $top5_km_user_result = $conn->query($top5_km_user_query);
+
+            $totalkmArray = array();
+            $namauserArray = array();
+
+            while ($km_user_row = $top5_km_user_result->fetch_assoc()) {
+            $totalkm = $km_user_row['total_km'];
+            $nama_user = $km_user_row['username'];
+
+            $totalkmArray[] = $totalkm;
+            $namauserArray[] = $nama_user;
+            }
+
             //mencari total_km dari semua user
             $total_km_pencarian_query = "SELECT SUM(km_akhir - km_awal) AS total_km_pencarian FROM laporan";
             $total_km_pencarian_result = $conn->query($total_km_pencarian_query);
@@ -137,19 +153,19 @@
     <div class="container table-responsive">
         <h2>Statistik User</h2>
         <div class="data-board">
-                <div class="data-item">
+                <div class="data-item2">
                     <h6 class="dats">Total Tempuh Perjalanan</h6>
                     <?php echo "<h7>$total_km_pencarian KM </h7>" ?>
                 </div>
 
-                <div class="data-item">
+                <div class="data-item2">
                     <h6 class="dats">Total Penggunaan BBM</h6>
                     <?php 
                     $total_bbm = calculateBBM($total_km_pencarian);
                     echo "<h7>$total_bbm Liter</h7>"; ?>
                 </div>
 
-                <div class="data-item">
+                <div class="data-item2">
                     <h6 class="dats">Total Penggunaan BBM</h6>
                     <?php 
                     $total_biaya = calculatebiaya($total_bbm);
@@ -160,11 +176,17 @@
         <div class="stats-board">
             <div class="stats-item">
                 <h6 class="stats">Jenis Perjalanan Yang Dilakukan</h6>
-                <canvas id="stats-jenis" class="piechart" style="width:100%; height: 100%;"></canvas>
+                <canvas id="stats-jenis" style="width:100%; height: 100%;"></canvas>
             </div>
             <div class="stats-item">
-                <h6 class="stats">Frekuensi Input</h6>
-                <canvas id="stats-tanggal" class="linechart" style="width:100%; height: 100%;"></canvas>
+                <h6 class="stats">Frekuensi Input Bulanan</h6>
+                <canvas id="stats-tanggal" style="width:100%; height: 100%;"></canvas>
+            </div>
+        </div>
+        <div class="stats-board">
+            <div class="stats-item2">
+                <h6 class="stats">Pengguna dengan Kilometer Terbanyak</h6>
+                <canvas id="stats-kilometer" style="width:100%; height: 100%;"></canvas>
             </div>
         </div>
     </div>
@@ -189,6 +211,11 @@
             options: {
                 title: {
                     display: true,
+                },
+                legend:{
+                    labels:{
+                        fontColor: 'white'
+                    }
                 }
             }
         });
@@ -214,6 +241,65 @@
             options: {
                 legend: {
                     display: false,
+                },
+                scales: {
+                    xAxes: [{
+                        ticks:{
+                            fontColor:'white'
+                        }
+                    }],
+                    yAxes: [{
+                        ticks:{
+                            beginAtZero: true,
+                            fontColor:'white'
+                        }
+                    }]
+                }
+            }
+        });
+
+        var nama_user = <?php echo json_encode($namauserArray); ?>;
+        var total_kilometer = <?php echo json_encode($totalkmArray); ?>;
+        var barColors2 = [
+            "#b91d47",
+            "#e8c3b9",
+            "#b91d47",
+            "#e8c3b9",
+            "#b91d47"
+        ];
+
+        new Chart("stats-kilometer", {
+            type: "bar",
+            data: {
+                labels: nama_user,
+                datasets: [{
+                    fill: true,
+                    lineTension: 0,
+                    backgroundColor: barColors2,
+                    borderColor: "rgba(255,255,255,0,1)",
+                    data: total_kilometer
+                }]
+            },
+            options: {
+                legend: {
+                    display: false,
+                    labels:{
+                        fontColor:'white'
+                    }
+                },
+                scales: {
+                    xAxes: [{
+                        ticks:{
+                            maxTicksLimit: 5,
+                            fontColor:'white'
+                        }
+                    }],
+                    yAxes: [{
+                        ticks:{
+                            beginAtZero: true,
+                            fontColor:'white'
+                        }
+                    }]
                 }
             }
         });
