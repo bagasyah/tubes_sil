@@ -251,7 +251,7 @@
         echo "<form method='GET' action='data_perjalanan_user.php?id=$user_id'>";
         echo "<div class='form-row'>";
         echo "<div class='form-group col-md-4'>";
-        echo "<label for='keyword'>Cari Alaamat:</label>";
+        echo "<label for='keyword'>Cari Alamat:</label>";
         echo "<input type='text' class='form-control' name='keyword' id='keyword' value='$keyword'>";
         echo "</div>";
         echo "<div class='form-group col-md-4'>";

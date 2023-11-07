@@ -80,22 +80,22 @@ if (isset($_POST['submit'])) {
             <div class="form-group">
                 <label for="tanggal">Tanggal:</label>
                 <input type="date" class="form-control" id="tanggal" name="tanggal"
-                    value="<?php echo $row['tanggal']; ?>" readonly>
+                    value="<?php echo $row['tanggal']; ?>" required>
             </div>
             <div class="form-group">
                 <label for="alamat_awal">Alamat Awal:</label>
                 <input type="text" class="form-control" id="alamat_awal" name="alamat_awal"
-                    value="<?php echo $row['alamat_awal']; ?>" readonly>
+                    value="<?php echo $row['alamat_awal']; ?>" required>
             </div>
             <div class="form-group">
                 <label for="alamat_tujuan">Alamat Tujuan:</label>
                 <input type="text" class="form-control" id="alamat_tujuan" name="alamat_tujuan"
-                    value="<?php echo $row['alamat_tujuan']; ?>" readonly>
+                    value="<?php echo $row['alamat_tujuan']; ?>" required>
             </div>
             <div class="form-group">
                 <label for="km_awal">KM Awal:</label>
                 <input type="number" class="form-control" id="km_awal" name="km_awal"
-                    value="<?php echo $row['km_awal']; ?>" readonly>
+                    value="<?php echo $row['km_awal']; ?>" required>
             </div>
             <div class="form-group">
                 <label for="km_akhir">KM Akhir:</label>
