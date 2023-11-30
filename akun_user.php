@@ -222,7 +222,6 @@
                     echo "<thead>";
                     echo "<tr>";
                     echo "<th>Username</th>";
-                    echo "<th>Password</th>";
                     echo "<th>Role</th>";
                     echo "<th>Status</th>";
                     echo "<th>Total KM</th>";
@@ -233,7 +232,6 @@
                     while ($row = $result->fetch_assoc()) {
                         echo "<tr>";
                         echo "<td>" . $row['username'] . "</td>";
-                        echo "<td>" . $row['password'] . "</td>";
                         echo "<td>" . $row['role'] . "</td>";
                         echo "<td>" . $row['status'] . "</td>";
                         echo "<td>" . $row['total_km'] . "</td>";

@@ -16,7 +16,7 @@ if (isset($_POST['login'])) {
         if ($row['status'] == 'approved' && $row['role'] == 'user') {
             $_SESSION['user_id'] = $row['id'];
             $_SESSION['role'] = $row['role'];
-            header("Location: statistik_user.php");
+            header("Location: data_perjalanan_user.php");
         } else if ($row['status'] == 'approved' && $row['role'] == 'admin'){
             $_SESSION['user_id'] = $row['id'];
             $_SESSION['role'] = $row['role'];

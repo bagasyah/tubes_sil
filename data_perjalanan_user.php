@@ -141,11 +141,11 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ml-auto mr-3 mt-1">
-                <li class="nav-item">
+                <!-- <li class="nav-item">
                     <a class="nav-link btn mb-1 mr-2 text-light btn-success" href="statistik_user.php">
                         <i class="fas fa-chevron-left"></i> Dashboard User
                     </a>
-                </li>
+                </li> -->
                 <li class='nav-item'><a class='nav-link btn mb-1 mr-2 text-light btn-tambah' href='create.php'><i class='fas fa-plus'></i> Tambah Perjalanan</a></li>
                 <li class="nav-item">
                     <a class="nav-link btn mb-1 text-light btn-danger" href="logout.php">

@@ -166,7 +166,7 @@
                 </div>
 
                 <div class="data-item2">
-                    <h6 class="dats">Total Penggunaan BBM</h6>
+                    <h6 class="dats">Total Biaya</h6>
                     <?php 
                     $total_biaya = calculatebiaya($total_bbm);
                     echo "<h7>Rp.$total_biaya,00</h7>"; 
