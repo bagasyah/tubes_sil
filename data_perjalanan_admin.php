@@ -2,17 +2,18 @@
 <html>
 
 <?php
- session_start();
- if (!isset($_SESSION['user_id'])) {
-     // Jika tidak ada user_id dalam sesi, arahkan pengguna ke halaman login
-     header("Location: index.php");
-     exit(); // Pastikan untuk keluar dari skrip agar tidak ada eksekusi lanjutan
- } else {
-     // Jika ada user_id dalam sesi, Anda dapat mengambilnya untuk digunakan
-     $user_id = $_SESSION['user_id'];
-     // Lakukan apa yang Anda butuhkan dengan $user_id
- }
+session_start();
+if (!isset($_SESSION['user_id'])) {
+    // Jika tidak ada user_id dalam sesi, arahkan pengguna ke halaman login
+    header("Location: index.php");
+    exit(); // Pastikan untuk keluar dari skrip agar tidak ada eksekusi lanjutan
+} else {
+    // Jika ada user_id dalam sesi, Anda dapat mengambilnya untuk digunakan
+    $user_id = $_SESSION['user_id'];
+    // Lakukan apa yang Anda butuhkan dengan $user_id
+}
 ?>
+
 <head>
     <title>Data Perjalanan User</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -168,7 +169,7 @@
             echo "<h2>Profil User</h2>";
             echo "<p>Nama: $username</p>";
 
-           // Menghitung total jarak tempuh dari data yang dicari
+            // Menghitung total jarak tempuh dari data yang dicari
             $tanggal_awal = $_GET['tanggal_awal'] ?? '';
             $tanggal_akhir = $_GET['tanggal_akhir'] ?? '';
 
@@ -184,7 +185,7 @@
 
             // Tambahkan kondisi pencarian berdasarkan keyword
             if (!empty($keyword)) {
-            // Gunakan OR jika sudah ada kondisi WHERE sebelumnya
+                // Gunakan OR jika sudah ada kondisi WHERE sebelumnya
                 $total_km_pencarian_query .= (empty($tanggal_awal) && empty($tanggal_akhir)) ? " WHERE" : " AND";
                 $total_km_pencarian_query .= " (users.username LIKE '%$keyword%' OR alamat_awal LIKE '%$keyword%' OR alamat_tujuan LIKE '%$keyword%' OR laporan.jenis_perjalanan LIKE '%$keyword%')";
             }
@@ -199,17 +200,17 @@
 
         $query = "SELECT laporan.*, users.username FROM laporan INNER JOIN users ON laporan.user_id = users.id";
 
-// Tambahkan kondisi tanggal_awal dan tanggal_akhir jika ada pencarian tanggal
-    if (!empty($tanggal_awal) && !empty($tanggal_akhir)) {
-        $query .= " WHERE laporan.tanggal BETWEEN '$tanggal_awal' AND '$tanggal_akhir'";
-    }
+        // Tambahkan kondisi tanggal_awal dan tanggal_akhir jika ada pencarian tanggal
+        if (!empty($tanggal_awal) && !empty($tanggal_akhir)) {
+            $query .= " WHERE laporan.tanggal BETWEEN '$tanggal_awal' AND '$tanggal_akhir'";
+        }
 
-// Tambahkan kondisi pencarian berdasarkan keyword
-    if (!empty($keyword)) {
-        $query .= " AND (users.username LIKE '%$keyword$' OR alamat_awal LIKE '%$keyword%' OR alamat_tujuan LIKE '%$keyword%' OR users.username LIKE '%$keyword%' OR laporan.jenis_perjalanan LIKE '%$keyword%')";
-    }
+        // Tambahkan kondisi pencarian berdasarkan keyword
+        if (!empty($keyword)) {
+            $query .= " AND (users.username LIKE '%$keyword$' OR alamat_awal LIKE '%$keyword%' OR alamat_tujuan LIKE '%$keyword%' OR users.username LIKE '%$keyword%' OR laporan.jenis_perjalanan LIKE '%$keyword%')";
+        }
 
-    $query .= " ORDER BY laporan.id DESC";
+        $query .= " ORDER BY laporan.id DESC";
 
         $result = $conn->query($query);
         $totalRowsResult = $conn->query($query);
@@ -258,11 +259,11 @@
         echo "<input type='hidden' name='id' value='$user_id'>";
         echo "<button class='btn btn-primary' type='submit'><i class='fas fa-search'></i></button>";
         echo "<button class='btn btn-danger ml-1' type='reset' onclick='window.location.href=\"data_perjalanan_admin.php?id=$user_id\"'><i class='fas fa-sync'></i></button>";
-        // echo "<a href='download_pdf.php' class='btn btn-success ml-1'><i class='fas fa-file-pdf'></i></a>";
+        echo "<a href='download_pdf2.php' class='btn btn-success ml-1'><i class='fas fa-file-pdf'></i></a>";
         // echo "<a href='download_excel2.php' class='btn btn-success ml-1'><i class='fas fa-file-excel'></i></a>";
         echo "</form>";
         echo "</div>";
-        
+
         if ($result->num_rows > 0) {
             function calculateBBM($total_km)
             {
@@ -296,7 +297,7 @@
             while ($row = $result->fetch_assoc()) {
                 echo "<tr>";
                 echo "<td>" . $row['tanggal'] . "</td>";
-                echo "<td>" . $row["username"] ."</td>";
+                echo "<td>" . $row["username"] . "</td>";
                 echo "<td>" . $row['alamat_awal'] . "</td>";
                 echo "<td>" . $row['alamat_tujuan'] . "</td>";
                 echo "<td>" . $row['km_awal'] . "</td>";
